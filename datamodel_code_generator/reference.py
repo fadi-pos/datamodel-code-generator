@@ -641,7 +641,10 @@ class ModelResolver:
         return self.references.get(self.resolve_ref(path))
 
     def delete(self, path: Union[Sequence[str], str]) -> None:
-        del self.references[self.resolve_ref(path)]
+        # The ref may be missing from the dict. The cause for this is unknown and it
+        # may indicate a bug elsewhere, but we are getting results that seem to be
+        # correct with this deletion doing nothing if the reference is missing.
+        self.references.pop(self.resolve_ref(path), None)
 
     def default_class_name_generator(self, name: str) -> str:
         # TODO: create a validate for class name
